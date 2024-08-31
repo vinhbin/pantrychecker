@@ -1,12 +1,10 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import {getFirestore} from 'firebase/firestore'
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { getAnalytics, isSupported } from "firebase/analytics";
+import { getFirestore } from 'firebase/firestore';
+import { useEffect } from 'react';
 
 // Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyDGWSC72cyiHSN7DDMSBevTUpQaCbrvGmI",
   authDomain: "inventory-management-87bb7.firebaseapp.com",
@@ -19,7 +17,20 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-const firestore = getFirestore(app)
+const firestore = getFirestore(app);
 
-export {firestore};
+// Initialize Analytics (only in the client-side)
+const initAnalytics = () => {
+  useEffect(() => {
+    isSupported().then((supported) => {
+      if (supported) {
+        const analytics = getAnalytics(app);
+        // Analytics can now be used
+      } else {
+        console.log("Firebase Analytics is not supported in this environment.");
+      }
+    });
+  }, []);
+};
+
+export { firestore, initAnalytics };
