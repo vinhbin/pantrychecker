@@ -2,7 +2,6 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics, isSupported } from "firebase/analytics";
 import { getFirestore } from 'firebase/firestore';
-import { useEffect } from 'react';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -20,17 +19,17 @@ const app = initializeApp(firebaseConfig);
 const firestore = getFirestore(app);
 
 // Initialize Analytics (only in the client-side)
-const initAnalytics = () => {
-  useEffect(() => {
-    isSupported().then((supported) => {
-      if (supported) {
-        const analytics = getAnalytics(app);
-        // Analytics can now be used
-      } else {
-        console.log("Firebase Analytics is not supported in this environment.");
-      }
-    });
-  }, []);
+const initAnalytics = async () => {
+  if (typeof window !== "undefined") {
+    const supported = await isSupported();
+    if (supported) {
+      const analytics = getAnalytics(app);
+      console.log("Firebase Analytics initialized");
+      // Analytics can now be used
+    } else {
+      console.log("Firebase Analytics is not supported in this environment.");
+    }
+  }
 };
 
 export { firestore, initAnalytics };
